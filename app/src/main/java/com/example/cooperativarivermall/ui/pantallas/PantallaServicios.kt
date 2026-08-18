@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -20,10 +22,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.example.cooperativarivermall.data.local.ServicioEntity
 import com.example.cooperativarivermall.viewmodel.EstadoServiciosUi
 
@@ -154,16 +159,37 @@ private fun TarjetaServicio(
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement =
-                    Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "Servicio #${servicio.id}",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF123B66)
+                // Foto del conductor cargada desde internet con Coil.
+                // La API de servicios no maneja fotos todavía, así que
+                // usamos un avatar público consistente por conductorId
+                // (mismo conductor -> misma imagen siempre).
+                AsyncImage(
+                    model = "https://i.pravatar.cc/150?u=conductor${servicio.conductorId}",
+                    contentDescription = "Foto del conductor",
+                    modifier = Modifier
+                        .size(44.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
                 )
+
+                Column(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = "Servicio #${servicio.id}",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF123B66)
+                    )
+                    Text(
+                        text = "Conductor #${servicio.conductorId}",
+                        fontSize = 13.sp
+                    )
+                }
 
                 Text(
                     text = servicio.estado,
