@@ -68,13 +68,15 @@ class ServicioRepository(
                 val servicioRemoto = respuesta.body()
 
                 if (servicioRemoto != null) {
-                    val servicioTemporal =
-                        servicio.copy(id = idLocal.toInt())
-
-                    servicioDao.eliminar(servicioTemporal)
-
+                    // Actualizamos la MISMA fila local (mismo id) en vez de
+                    // borrarla e insertar una nueva con el id del servidor.
+                    // Si insertáramos con el id remoto tal cual, y ese id
+                    // coincidiera con el id autogenerado de otro servicio ya
+                    // guardado localmente, REPLACE lo sobrescribiría sin avisar.
                     servicioDao.guardar(
-                        servicioRemoto.aEntity()
+                        servicioRemoto
+                            .aEntity()
+                            .copy(id = idLocal.toInt())
                     )
                 }
 
